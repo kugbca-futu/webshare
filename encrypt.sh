@@ -59,5 +59,5 @@ echo ""
 echo "Magic links:"
 for src in source/*.html; do
   filename=$(basename "$src")
-  echo "  https://kugbca-futu.github.io/webshare/${filename}?staticrypt_pwd=${HASHED_PWD}"
+  echo "  https://kugbca-futu.github.io/webshare/${filename}?staticrypt_pwd=${HASHED_PWD}&remember_me=1"
 done
