@@ -7,7 +7,7 @@ if [ ! -f .env ]; then
   STATICRYPT_PASSWORD=$(openssl rand -base64 32)
   STATICRYPT_SALT=$(openssl rand -hex 16)
   printf "STATICRYPT_PASSWORD=%s\nSTATICRYPT_SALT=%s\n" "$STATICRYPT_PASSWORD" "$STATICRYPT_SALT" > .env
-  echo "Done. Keep .env safe — losing it means you can't update existing links."
+  echo "Done. Keep .env safe."
   echo ""
 fi
 
@@ -38,21 +38,11 @@ done
 
 [ "$failed" -eq 1 ] && echo "" && echo "One or more failed. Do not commit." && exit 1
 
-HASHED_PWD=$(node -e "
-const { webcrypto: { subtle } } = require('crypto');
-async function step(pass, salt, iter, hash) {
-  const enc = new TextEncoder();
-  const key = await subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveBits']);
-  const bits = await subtle.deriveBits({ name: 'PBKDF2', hash, iterations: iter, salt: enc.encode(salt) }, key, 256);
-  return Buffer.from(bits).toString('hex');
-}
-(async () => {
-  const h1 = await step(process.env.STATICRYPT_PASSWORD, process.env.STATICRYPT_SALT, 1000, 'SHA-1');
-  const h2 = await step(h1, process.env.STATICRYPT_SALT, 14000, 'SHA-256');
-  const h3 = await step(h2, process.env.STATICRYPT_SALT, 585000, 'SHA-256');
-  process.stdout.write(h3);
-})();
-")
+# Use staticrypt's built-in --share-remember to get the hashed key, then use ? instead of #
+# so links work when clicked directly from Slack, Teams, email, etc.
+FRAGMENT=$(/opt/homebrew/bin/npx staticrypt "$(ls source/*.html | head -1)" \
+  -p "$STATICRYPT_PASSWORD" -s "$STATICRYPT_SALT" --share --share-remember 2>/dev/null | tail -1)
+QUERY="${FRAGMENT//#/?}"
 
 echo ""
 echo "All encrypted. Ready to commit."
@@ -60,5 +50,5 @@ echo ""
 echo "Magic links:"
 for src in source/*.html; do
   filename=$(basename "$src")
-  echo "  https://kugbca-futu.github.io/webshare/${filename}?staticrypt_pwd=${HASHED_PWD}&remember_me=1"
+  echo "  https://kugbca-futu.github.io/webshare/${filename}${QUERY}"
 done
