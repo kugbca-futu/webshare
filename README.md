@@ -1,16 +1,14 @@
 # webshare
 
-Share HTML deliverables with clients via a secure link. They click it and it opens — no login, no account, nothing to install. The file is encrypted so it can sit on a public URL and only the person with the link can read it.
+Share HTML deliverables with clients via a link. They click it and it opens. No login required on their end.
 
-## How it works
-
-HTML files in `source/` are encrypted locally using [StatiCrypt](https://github.com/robinmoisson/staticrypt) (AES-256, runs in the browser) and hosted on GitHub Pages. The decryption key lives in the link itself. Anyone with the full link can open the file. Anyone without it sees a password prompt.
+The file is encrypted locally using [StatiCrypt](https://github.com/robinmoisson/staticrypt) and hosted on GitHub Pages. The decryption key is embedded in the link. Anyone with the full link can read it. Anyone without it sees a password prompt.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) (for the encryption script)
+- [Node.js](https://nodejs.org)
 - Git
-- A GitHub account with Pages enabled on this repo (Settings → Pages → Deploy from main branch root)
+- GitHub Pages enabled on this repo (Settings > Pages > Deploy from main branch root)
 
 ## First-time setup
 
@@ -19,23 +17,23 @@ git config core.hooksPath .githooks
 ./encrypt.sh
 ```
 
-`encrypt.sh` generates a password on first run and saves it to `.env`. Nothing else to configure.
+First run generates a password and saves it to `.env`.
 
 ## Workflow
 
 1. Add or edit HTML files in `source/`
-2. `./encrypt.sh` — encrypts everything and prints magic links
+2. `./encrypt.sh` prints the links when done
 3. `git add *.html && git commit -m "..." && git push`
 
-The pre-commit hook blocks any unencrypted HTML from being committed. GitHub Pages deploys within about a minute of pushing.
+GitHub Pages deploys within about a minute of pushing.
 
 ## Sharing
 
-Copy a link from the `./encrypt.sh` output and send it directly. Works when clicked from Slack, Teams, email, or any browser.
+Copy a link from the `./encrypt.sh` output and send it. Works from Slack, Teams, email.
 
 ## Password rotation
 
-1. Update `STATICRYPT_PASSWORD` in `.env` with a new value
-2. `./encrypt.sh` — prints new links
+1. Update `STATICRYPT_PASSWORD` in `.env`
+2. `./encrypt.sh`
 3. Commit and push
-4. Resend links — old ones stop working as soon as the new files are live
+4. Resend links. Old ones stop working once the new files are live.
