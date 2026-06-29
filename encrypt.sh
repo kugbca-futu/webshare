@@ -17,7 +17,7 @@ fi
 failed=0
 for src in source/*.html; do
   filename=$(basename "$src")
-  /opt/homebrew/bin/npx staticrypt "$src" -d . --remember 7
+  npx staticrypt "$src" -d . --remember 7
 
   if head -2 "$filename" | grep -q 'class="staticrypt-html"'; then
     echo "ok  $filename"
@@ -28,7 +28,7 @@ done
 
 [ "$failed" -eq 1 ] && echo "" && echo "One or more failed. Do not commit." && exit 1
 
-FRAGMENT=$(/opt/homebrew/bin/npx staticrypt "$(ls source/*.html | head -1)" --share --share-remember 2>/dev/null | tail -1)
+FRAGMENT=$(npx staticrypt "$(ls source/*.html | head -1)" --share --share-remember 2>/dev/null | tail -1)
 QUERY="${FRAGMENT//#/?}"
 QUERY="${QUERY/&remember_me/&remember_me=1}"
 
