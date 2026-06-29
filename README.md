@@ -25,15 +25,21 @@ The pre-commit hook blocks any unencrypted HTML from being committed.
 
 ## Sharing
 
+`./encrypt.sh` prints the correct magic links after encrypting. Copy from there.
+
+Magic links use the hashed password in the URL fragment, not the raw password. The format is:
+
 ```
-https://kugbca-futu.github.io/webshare/<filename>#staticrypt_pwd=<password>
+https://kugbca-futu.github.io/webshare/<filename>#staticrypt_pwd=<hashed-password>
 ```
 
-Send the full link including the `#` fragment. Recipients open it in any browser with no login required. The password never leaves their browser.
+Recipients open the link in a browser with no login required. Decryption happens entirely in their browser — the password never leaves their machine.
+
+Paste the link into the browser address bar directly. Some messaging apps (Slack, Teams) strip URL fragments when opening links, which breaks auto-decryption.
 
 ## Password rotation
 
 1. Update `STATICRYPT_PASSWORD` in `.env`
-2. `./encrypt.sh`
+2. `./encrypt.sh` (prints new magic links)
 3. Commit and push
 4. Resend links — old ones stop working immediately
