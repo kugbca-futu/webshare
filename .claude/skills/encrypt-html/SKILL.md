@@ -9,4 +9,4 @@ Run from the repo root:
 ./encrypt.sh
 ```
 
-Reads every HTML file from `source/`, encrypts it, writes the encrypted output to the repo root, and self-verifies. If it fails, check that `.env` exists with `STATICRYPT_PASSWORD` and `STATICRYPT_SALT` set. Never commit source/ files or run staticrypt manually on the root HTML files.
+Reads every HTML file from `source/`, encrypts it, writes the encrypted output to the repo root, and prints magic links. Generates `.env` with credentials automatically on first run. Never commit source/ files or run staticrypt manually on the root HTML files.
