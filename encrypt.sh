@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -f .env ]; then
-  set -a; source .env; set +a
+# Auto-generate credentials on first run
+if [ ! -f .env ]; then
+  echo "First run: generating credentials and saving to .env"
+  STATICRYPT_PASSWORD=$(openssl rand -base64 32)
+  STATICRYPT_SALT=$(openssl rand -hex 16)
+  printf "STATICRYPT_PASSWORD=%s\nSTATICRYPT_SALT=%s\n" "$STATICRYPT_PASSWORD" "$STATICRYPT_SALT" > .env
+  echo "Done. Keep .env safe — losing it means you can't update existing links."
+  echo ""
 fi
 
-if [ -z "${STATICRYPT_PASSWORD:-}" ] || [ -z "${STATICRYPT_SALT:-}" ]; then
-  echo "Error: STATICRYPT_PASSWORD and STATICRYPT_SALT must be set in .env"
-  exit 1
-fi
+set -a; source .env; set +a
 
 sources=$(ls source/*.html 2>/dev/null || true)
 if [ -z "$sources" ]; then
@@ -35,8 +38,6 @@ done
 
 [ "$failed" -eq 1 ] && echo "" && echo "One or more failed. Do not commit." && exit 1
 
-# Compute the hashed password that goes in magic links.
-# StaticCrypt expects the 3-step PBKDF2 output in the URL fragment, not the raw password.
 HASHED_PWD=$(node -e "
 const { webcrypto: { subtle } } = require('crypto');
 async function step(pass, salt, iter, hash) {
