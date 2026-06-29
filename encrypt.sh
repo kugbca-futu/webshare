@@ -30,6 +30,7 @@ done
 
 FRAGMENT=$(/opt/homebrew/bin/npx staticrypt "$(ls source/*.html | head -1)" --share --share-remember 2>/dev/null | tail -1)
 QUERY="${FRAGMENT//#/?}"
+QUERY="${QUERY/&remember_me/&remember_me=1}"
 
 echo ""
 echo "All encrypted. Ready to commit."
