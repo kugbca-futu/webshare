@@ -9,4 +9,4 @@ Run from the repo root:
 ./encrypt.sh
 ```
 
-Reads every HTML file from `source/`, encrypts it, writes the encrypted output to the repo root, and prints magic links. Generates `.env` with credentials automatically on first run. Never commit source/ files or run staticrypt manually on the root HTML files.
+Reads every HTML file from `source/`, encrypts it, writes the encrypted output to the repo root, and prints magic links. Generates `.env` with the password automatically on first run. Salt is managed by StatiCrypt in `.staticrypt.json`, which is committed to the repo. Never commit source/ files or run staticrypt manually on the root HTML files.
