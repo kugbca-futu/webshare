@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+red='\033[0;31m'; green='\033[0;32m'; reset='\033[0m'
+
+staged_html=$(git diff --cached --name-only --diff-filter=ACM | grep '\.html$' || true)
+[ -z "$staged_html" ] && exit 0
+
+failed=0
+for f in $staged_html; do
+  if head -2 "$f" | grep -q 'class="staticrypt-html"'; then
+    echo -e "  ${green}ok${reset}  $f"
+  else
+    echo -e "  ${red}FAIL${reset} $f is not encrypted"
+    failed=1
+  fi
+done
+
+if [ "$failed" -eq 1 ]; then
+  echo -e "\n${red}Commit blocked.${reset} Run ./encrypt.sh first.\n"
+  exit 1
+fi
