@@ -6,38 +6,26 @@ Encrypted client deliverables on GitHub Pages. Source HTML lives in `source/` (g
 
 ```bash
 git config core.hooksPath .githooks
+./encrypt.sh
 ```
 
-Create `.env` in the repo root (get credentials from the team):
-
-```
-STATICRYPT_PASSWORD=<password>
-STATICRYPT_SALT=<salt>
-```
+First run generates a password automatically and saves it to `.env`. Nothing else to configure.
 
 ## Workflow
 
 1. Edit or add HTML in `source/`
-2. `./encrypt.sh`
-3. `git add <file>.html && git commit -m "..." && git push`
+2. `./encrypt.sh` — encrypts everything and prints magic links
+3. `git add *.html && git commit -m "..." && git push`
 
 The pre-commit hook blocks any unencrypted HTML from being committed.
 
 ## Sharing
 
-`./encrypt.sh` prints the correct magic links after encrypting. Copy from there.
-
-Magic links use the hashed password as a query parameter. The format is:
-
-```
-https://kugbca-futu.github.io/webshare/<filename>?staticrypt_pwd=<hashed-password>
-```
-
-Recipients open the link in a browser with no login required. Decryption happens entirely in their browser — the password never leaves their machine. Links work when clicked directly from Slack, Teams, or email.
+Copy a link from the `./encrypt.sh` output and send it. Works when clicked directly from Slack, Teams, or email. Recipient clicks, page opens — no login, nothing to install.
 
 ## Password rotation
 
 1. Update `STATICRYPT_PASSWORD` in `.env`
-2. `./encrypt.sh` (prints new magic links)
+2. `./encrypt.sh` — prints new magic links
 3. Commit and push
 4. Resend links — old ones stop working immediately
